@@ -1,23 +1,27 @@
 FROM alpine:3.19
 
 COPY /etc/openvpn /etc/openvpn
-COPY init.sh init.sh
+COPY /root/easy-rsa-ipsec /root/easy-rsa-ipsec
+COPY /root/dnsmap /root/dnsmap
+
 
 RUN apk update && apk add openrc
 RUN mkdir -p /run/openrc/exclusive && touch /run/openrc/softlevel
-RUN apk add --no-cache ipcalc sipcalc gawk iptables ferm curl wget openssl nano git python3 knot-resolver iproute2 openvpn grep openssh-server openssh-sftp-server procps dbus easy-rsa gawk ebtables bash tzdata dnsmap sed libidn
+RUN apk add --no-cache ipcalc sipcalc gawk iptables ferm curl wget openssl nano git python3 knot-resolver iproute2 openvpn grep openssh-server openssh-sftp-server procps dbus easy-rsa gawk ebtables bash tzdata sed libidn
 
 # debug tools
 RUN apk add --no-cache tar ncdu socat mc strace
 
-RUN git clone --depth 1 --single-branch https://bitbucket.org/anticensority/antizapret-pac-generator-light antizapret
+RUN git clone --depth 1 --single-branch https://github.com/runalsh/antizapret-pac-generator-light antizapret
+# /root/antizapret will be external path or volume in docker-compose
 
 RUN mv /usr/lib/python3.11/EXTERNALLY-MANAGED /usr/lib/python3.11/EXTERNALLY-MANAGED.old
 RUN python -m ensurepip && pip3 install --upgrade dnspython 
 RUN ln -s /usr/share/zoneinfo/Europe/Moscow /etc/localtime
-RUN rc-update add sshd  && rc-update add kresd && rc-update add iptables  && rc-update add rc-service iptables save
+RUN rc-update add sshd  && rc-update add kresd && rc-update add iptables 
+# && rc-service iptables save
 # && rc-update add openvpn
-RUN echo "nameserver 1.1.1.1" >> /etc/resolv.conf
+#RUN echo "nameserver 1.1.1.1" >> /etc/resolv.conf
 RUN echo "root:$root_passwd" | chpasswd
 RUN sed -i "s|^#PermitRootLogin .*|PermitRootLogin yes|g" /etc/ssh/sshd_config
 RUN sed -i "s|^#AllowAgentForwarding .*|AllowAgentForwarding yes|g" /etc/ssh/sshd_config
@@ -42,4 +46,6 @@ RUN echo "auto eth0" > /etc/network/interfaces
 EXPOSE 1194
 EXPOSE 22
 
-ENTRYPOINT ["./init.sh"]
+COPY init.sh /root/init.sh
+USER root
+ENTRYPOINT ["bash", "-c", "/root/init.sh"]
