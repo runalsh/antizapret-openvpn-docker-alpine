@@ -14,7 +14,8 @@ RUN git clone --depth 1 --single-branch https://bitbucket.org/anticensority/anti
 RUN mv /usr/lib/python3.11/EXTERNALLY-MANAGED /usr/lib/python3.11/EXTERNALLY-MANAGED.old
 RUN python -m ensurepip && pip3 install --upgrade dnspython 
 RUN ln -s /usr/share/zoneinfo/Europe/Moscow /etc/localtime
-RUN rc-update add sshd && rc-update add openvpn && rc-update add kresd && rc-update add iptables  && rc-update add rc-service iptables save
+RUN rc-update add sshd  && rc-update add kresd && rc-update add iptables  && rc-update add rc-service iptables save
+# && rc-update add openvpn
 RUN echo "nameserver 1.1.1.1" >> /etc/resolv.conf
 RUN echo "root:$root_passwd" | chpasswd
 RUN sed -i "s|^#PermitRootLogin .*|PermitRootLogin yes|g" /etc/ssh/sshd_config
@@ -24,9 +25,18 @@ RUN sed -i "s|^#GatewayPorts .*|GatewayPorts yes|g" /etc/ssh/sshd_config
 RUN rm -rf /root/easy-rsa-ipsec/easyrsa3 && cp -r /usr/share/easy-rsa /root/easy-rsa-ipsec/easyrsa3 && bash /root/easy-rsa-ipsec/generate.sh
 RUN sed -i 's/etc\/openvpn/etc\/openvpn\/server/' /etc/init.d/openvpn
 
+# RUN mv /etc/init.d/openvpn /etc/init.d/openvpn-tcp
+# RUN sed -i 's/\$instance_name.conf/antizapret.conf/' /etc/init.d/openvpn-tcp
+# RUN cp /etc/init.d/openvpn-tcp /etc/init.d/openvpn-udp
+# RUN sed -i 's/antizapret.conf/antizapret-tcp.conf/' /etc/init.d/openvpn-udp
+
 RUN echo "0 */6 * * * /root/antizapret/doall.sh">> /etc/crontabs/root
 
 RUN echo "auto lo" > /etc/network/interfaces
 RUN echo "iface lo inet loopback" > /etc/network/interfaces
 RUN echo "auto eth0" > /etc/network/interfaces
 
+EXPOSE 1194
+EXPOSE 22
+
+ENTRYPOINT ["openvpn /etc/openvpn/server/antizapret-tcp.conf"]
