@@ -5,5 +5,3 @@ not completed yet
 
 1) dnsmap replacement for alpine, scripts in /root/dnsmap from original
    may be build from https://github.com/resurrecting-open-source-projects/dnsmap ?
-
-many RUN command, strip to 2-3 blocks (when will be ready)
