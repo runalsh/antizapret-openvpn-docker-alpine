@@ -24,8 +24,7 @@ RUN mv /usr/lib/python3.11/EXTERNALLY-MANAGED /usr/lib/python3.11/EXTERNALLY-MAN
     sed -i "s|^#AllowAgentForwarding .*|AllowAgentForwarding yes|g" /etc/ssh/sshd_config && \ 
     sed -i "s|^#AllowTcpForwarding .*|AllowTcpForwarding yes|g" /etc/ssh/sshd_config && \ 
     sed -i "s|^#GatewayPorts .*|GatewayPorts yes|g" /etc/ssh/sshd_config && \ 
-    rm -rf /root/easy-rsa-ipsec/easyrsa3 && cp -r /usr/share/easy-rsa /root/easy-rsa-ipsec/easyrsa3 && bash /root/easy-rsa-ipsec/generate.sh && \ 
-    sed -i 's/etc\/openvpn/etc\/openvpn\/server/' /etc/init.d/openvpn && \ 
+    cp -r /usr/share/easy-rsa /root/easy-rsa-ipsec/easyrsa3 && bash /root/easy-rsa-ipsec/generate.sh && \ 
     echo "0 */6 * * * /root/antizapret/doall.sh">> /etc/crontabs/root && \ 
     echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.d/ipv4.conf && \ 
     echo "auto lo" > /etc/network/interfaces && \ 
@@ -34,6 +33,7 @@ RUN mv /usr/lib/python3.11/EXTERNALLY-MANAGED /usr/lib/python3.11/EXTERNALLY-MAN
 # && rc-service iptables save
 # && rc-update add openvpn
 # RUN echo "nameserver 1.1.1.1" >> /etc/resolv.conf && \ 
+# RUN sed -i 's/etc\/openvpn/etc\/openvpn\/server/' /etc/init.d/openvpn && \ 
 # RUN mv /etc/init.d/openvpn /etc/init.d/openvpn-tcp
 # RUN sed -i 's/\$instance_name.conf/antizapret.conf/' /etc/init.d/openvpn-tcp
 # RUN cp /etc/init.d/openvpn-tcp /etc/init.d/openvpn-udp
