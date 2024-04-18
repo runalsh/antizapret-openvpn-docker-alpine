@@ -1,5 +1,5 @@
 # antizapret-openvpn-docker-alpine
-not completed yet
+working, but not completed yet
 
    disabled BF-CBC, original files from [rootfs.tar.xz](https://antizapret.prostovpn.org/container-images/az-vpn/rootfs.tar.xz)
 
