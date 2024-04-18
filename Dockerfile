@@ -1,6 +1,7 @@
 FROM alpine:3.19
 
 COPY /etc/openvpn /etc/openvpn
+COPY init.sh init.sh
 
 RUN apk update && apk add openrc
 RUN mkdir -p /run/openrc/exclusive && touch /run/openrc/softlevel
@@ -32,6 +33,8 @@ RUN sed -i 's/etc\/openvpn/etc\/openvpn\/server/' /etc/init.d/openvpn
 
 RUN echo "0 */6 * * * /root/antizapret/doall.sh">> /etc/crontabs/root
 
+RUN echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.d/ipv4.conf
+
 RUN echo "auto lo" > /etc/network/interfaces
 RUN echo "iface lo inet loopback" > /etc/network/interfaces
 RUN echo "auto eth0" > /etc/network/interfaces
@@ -39,4 +42,4 @@ RUN echo "auto eth0" > /etc/network/interfaces
 EXPOSE 1194
 EXPOSE 22
 
-ENTRYPOINT ["openvpn /etc/openvpn/server/antizapret-tcp.conf"]
+ENTRYPOINT ["./init.sh"]
