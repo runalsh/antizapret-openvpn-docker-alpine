@@ -4,7 +4,7 @@ COPY /etc/openvpn /etc/openvpn
 
 RUN apk update && apk add openrc
 RUN mkdir -p /run/openrc/exclusive && touch /run/openrc/softlevel
-RUN apk add --no-cache tar ipcalc sipcalc gawk iptables ferm curl wget openssl nano git python3 knot-resolver iproute2 openvpn grep mc ncdu openssh-server openssh-sftp-server procps dbus easy-rsa gawk ebtables bash tzdata dnsmap socat sed
+RUN apk add --no-cache tar ipcalc sipcalc gawk iptables ferm curl wget openssl nano git python3 knot-resolver iproute2 openvpn grep mc ncdu openssh-server openssh-sftp-server procps dbus easy-rsa gawk ebtables bash tzdata dnsmap socat sed libidn
 
 RUN git clone --depth 1 --single-branch https://bitbucket.org/anticensority/antizapret-pac-generator-light antizapret
 
